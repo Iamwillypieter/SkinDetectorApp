@@ -1,5 +1,4 @@
-package com.example.skincancerdetector.model
-import android.graphics.Bitmap
+package com.example.skincancerdetector.data
 import kotlinx.coroutines.tasks.await
 
 import com.google.firebase.auth.FirebaseAuth
@@ -44,14 +43,16 @@ class Repository {
         scansCollection.document(scanId).delete().await()
     }
 
-    suspend fun login(email: String, password: String): FirebaseUser? {
+    suspend fun login(email: String, password: String): FirebaseUser {
         val authResult = auth.signInWithEmailAndPassword(email, password).await()
-        return authResult.user
+        val user = authResult.user ?: throw Exception("Login failed. User is null.")
+        return user
     }
 
-    suspend fun register(email: String, password: String): FirebaseUser? {
+    suspend fun register(email: String, password: String): FirebaseUser {
         val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-        return authResult.user
+        val user = authResult.user ?: throw Exception("Registration failed. User is null.")
+        return user
     }
 
     fun logout() {
