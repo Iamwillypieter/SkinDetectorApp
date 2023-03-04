@@ -15,4 +15,14 @@
         android:name="com.example.skincancerdetector.ui.scan.AnalysisFragment"
         android:label="fragment_analysis"
         tools:layout="@layout/fragment_analysis" />
+    <fragment
+        android:id="@+id/formFragment"
+        android:name="com.example.skincancerdetector.ui.scan.FormFragment"
+        android:label="fragment_form"
+        tools:layout="@layout/fragment_form" />
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.skincancerdetector.ui.scan.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" />
 </navigation>
