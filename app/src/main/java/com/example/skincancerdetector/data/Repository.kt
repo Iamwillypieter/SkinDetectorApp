@@ -31,10 +31,10 @@ class Repository {
         return documentSnapshot.toObject(ScanData::class.java)
     }
 
-    suspend fun updateScan(scanId: String, doctorId: String, notes: String) {
+    suspend fun updateScan(scanId: String, notes: String) {
         val scansCollection = firestore.collection("scans")
         val scanRef = scansCollection.document(scanId)
-        val updateMap = mapOf("doctorId" to doctorId, "notes" to notes)
+        val updateMap = mapOf("notes" to notes)
         scanRef.update(updateMap).await()
     }
 
@@ -45,14 +45,12 @@ class Repository {
 
     suspend fun login(email: String, password: String): FirebaseUser {
         val authResult = auth.signInWithEmailAndPassword(email, password).await()
-        val user = authResult.user ?: throw Exception("Login failed. User is null.")
-        return user
+        return authResult.user ?: throw Exception("Login failed. User is null.")
     }
 
     suspend fun register(email: String, password: String): FirebaseUser {
         val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-        val user = authResult.user ?: throw Exception("Registration failed. User is null.")
-        return user
+        return authResult.user ?: throw Exception("Registration failed. User is null.")
     }
 
     fun logout() {

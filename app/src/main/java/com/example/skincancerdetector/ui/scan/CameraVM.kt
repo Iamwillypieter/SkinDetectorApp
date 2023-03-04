@@ -7,12 +7,19 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.skincancerdetector.data.Repository
+import com.example.skincancerdetector.data.ScanData
+import com.example.skincancerdetector.model.ImageClassifier
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CameraVM(private val repository: Repository) : ViewModel() {
+class CameraVM(
+    private val repository: Repository,
+    private val classifier: ImageClassifier
+    ) : ViewModel() {
 
     private var _imageUri = MutableLiveData<Uri?>()
     val imageUri: LiveData<Uri?>
@@ -33,4 +40,38 @@ class CameraVM(private val repository: Repository) : ViewModel() {
             storageDir /* directory */
         )
     }
+
+    private fun analyze(image:Uri){
+        classifier.classifyImage(image)
+    }
+
+    private val _scans = MutableLiveData<List<ScanData>>()
+    val scans: LiveData<List<ScanData>>
+        get() = _scans
+
+    fun addScan(scan: ScanData) {
+        viewModelScope.launch {
+            repository.addScan(scan)
+        }
+    }
+
+    fun getScans(userId: String) {
+        viewModelScope.launch {
+            val scans = repository.getScans(userId)
+            _scans.value = scans
+        }
+    }
+
+    fun updateScan(scanId: String, notes: String) {
+        viewModelScope.launch {
+            repository.updateScan(scanId, notes)
+        }
+    }
+
+    fun deleteScan(scanId: String) {
+        viewModelScope.launch {
+            repository.deleteScan(scanId)
+        }
+    }
+
 }

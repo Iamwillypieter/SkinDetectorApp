@@ -2,6 +2,7 @@ package com.example.skincancerdetector.model
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.net.Uri
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -23,13 +24,15 @@ class ImageClassifier(private val context: Context) {
         interpreter = Interpreter(modelBuffer)
     }
 
-    fun classifyImage(imageFilename: String): Map<String, Float> {
-        val bitmap = BitmapFactory.decodeStream(context.assets.open(imageFilename))
+    fun classifyImage(imageUri: Uri): Map<String, Float> {
+        val bitmap = imageUri.let { context.contentResolver.openInputStream(it)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream)
+        } }
         val inputBuffer = ByteBuffer.allocateDirect(1 * IMAGE_SIZE * IMAGE_SIZE * 3 * 4)
         inputBuffer.order(ByteOrder.nativeOrder())
 
         val pixels = IntArray(IMAGE_SIZE * IMAGE_SIZE)
-        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        bitmap?.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var pixel = 0
         for (i in 0 until IMAGE_SIZE) {
