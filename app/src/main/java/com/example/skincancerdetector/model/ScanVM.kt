@@ -1,24 +1,22 @@
-package com.example.skincancerdetector.ui.scan
+package com.example.skincancerdetector.model
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
-import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.data.ScanData
-import com.example.skincancerdetector.model.ImageClassifier
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CameraVM(
+class ScanVM(
     private val repository: Repository,
     private val classifier: ImageClassifier
     ) : ViewModel() {

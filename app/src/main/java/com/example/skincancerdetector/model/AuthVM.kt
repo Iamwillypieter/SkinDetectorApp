@@ -1,4 +1,4 @@
-package com.example.skincancerdetector.ui.auth
+package com.example.skincancerdetector.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
