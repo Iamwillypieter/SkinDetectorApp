@@ -1,6 +1,7 @@
 package com.example.skincancerdetector.ui.scan
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
@@ -13,6 +14,7 @@ import com.example.skincancerdetector.data.ScanData
 import com.example.skincancerdetector.model.ImageClassifier
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,9 +27,12 @@ class CameraVM(
     val imageUri: LiveData<Uri?>
         get() = _imageUri
 
-    fun captureImage(context: Context) {
-        val file = createImageFile(context)
-        _imageUri.value = file?.let { FileProvider.getUriForFile(context, "com.example.app.fileprovider", it) }
+    fun captureImage(context: Context, bitmap: Bitmap) {
+        val filename = "image.jpg"
+        val file = File(context.filesDir, filename)
+        val outputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        outputStream.close()
     }
 
     private fun createImageFile(context: Context): File? {

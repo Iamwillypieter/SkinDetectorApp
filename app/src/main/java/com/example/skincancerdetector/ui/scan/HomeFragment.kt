@@ -1,4 +1,4 @@
-package com.example.skincancerdetector.ui
+package com.example.skincancerdetector.ui.scan
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
