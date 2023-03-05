@@ -1,8 +1,11 @@
 package com.example.skincancerdetector.data
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.coroutines.tasks.await
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Date
 
@@ -43,6 +46,10 @@ class Repository {
         scansCollection.document(scanId).delete().await()
     }
 
+    fun getUser():FirebaseUser?{
+        return auth.currentUser
+    }
+
     suspend fun login(email: String, password: String): FirebaseUser {
         val authResult = auth.signInWithEmailAndPassword(email, password).await()
         return authResult.user ?: throw Exception("Login failed. User is null.")
@@ -56,12 +63,6 @@ class Repository {
     fun logout() {
         auth.signOut()
     }
+
+    //TODO: Buat fungsi buat auto login pake Google... (agak susah, emang, iya...)
 }
-
-//id - The unique identifier of the scan.
-//patientId - The ID of the patient who was scanned.
-//userId - The ID of the user who performed the scan.
-//image - The scanned image of the skin lesion.
-//diagnosis - The diagnosis of the skin lesion, as determined by the machine learning algorithm.
-//created - The timestamp of when the scan was created.
-

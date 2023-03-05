@@ -16,6 +16,14 @@ class AuthVM(private val repository: Repository) : ViewModel() {
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
+    init {
+        autoLogin()
+    }
+
+    private fun autoLogin(){
+        _loggedInUser.value = repository.getUser()
+    }
+
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
