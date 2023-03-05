@@ -56,8 +56,6 @@ class Repository {
     fun logout() {
         auth.signOut()
     }
-
-
 }
 
 //id - The unique identifier of the scan.
@@ -67,9 +65,3 @@ class Repository {
 //diagnosis - The diagnosis of the skin lesion, as determined by the machine learning algorithm.
 //created - The timestamp of when the scan was created.
 
-data class ScanData(//Reminder, no need to code for scanId because, because FIREBASE!!!
-    val userId: String,
-    val imageUrl: String,
-    val date: Date,
-    val results: Map<String, Float>,
-)
