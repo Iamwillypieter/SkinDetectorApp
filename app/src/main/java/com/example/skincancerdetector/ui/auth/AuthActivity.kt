@@ -3,6 +3,8 @@ package com.example.skincancerdetector.ui.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.example.skincancerdetector.R
@@ -20,6 +22,7 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
 
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(repository))
             .get(AuthVM::class.java)
@@ -27,7 +30,7 @@ class AuthActivity : AppCompatActivity() {
         authViewModel.loggedInUser.observe(this){
             if(it==null)
                 Navigation.findNavController(
-                    this, R.id.fragmentContainerView
+                    this, binding.fragContainAuth.id
                 ).navigate(R.id.loginFragment)
             else
                 startActivity(

@@ -4,10 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.data.ScanData
 import kotlinx.coroutines.launch
@@ -77,4 +74,17 @@ class ScanVM(
         }
     }
 
+}
+
+class ScanViewModelFactory(
+    private val repository: Repository,
+    private val classifier: ImageClassifier
+    ) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        when {
+            modelClass.isAssignableFrom(ScanVM::class.java)->{
+                ScanVM(repository,classifier) as T
+            }
+            else -> throw Throwable("Unknown ViewModel class: " + modelClass.name)
+        }
 }

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.skincancerdetector.R
 import com.example.skincancerdetector.databinding.FragmentLoginBinding
@@ -38,6 +40,10 @@ class LoginFragment : Fragment() {
             }
             authViewModel.login(email, password)
         } //Login Function
+
+        binding.buttonRegister.setOnClickListener {
+            findNavController().navigate(R.id.registerFragment)
+        }
 
         return binding.root
     }
