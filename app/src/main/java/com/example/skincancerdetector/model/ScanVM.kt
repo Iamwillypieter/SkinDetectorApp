@@ -2,12 +2,14 @@ package com.example.skincancerdetector.model
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.data.ScanData
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -19,8 +21,17 @@ class ScanVM(
     ) : ViewModel() {
 
     private var _imageUri = MutableLiveData<Uri?>()
-    val imageUri: LiveData<Uri?>
-        get() = _imageUri
+    val imageUri: LiveData<Uri?> = _imageUri
+
+    private val _imageBitmap = MutableLiveData<Bitmap?>()
+    val imageBitmap: LiveData<Bitmap?> = _imageBitmap
+
+    fun storeImage(bitmap: Bitmap, quality:Int) {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        val compressedBitmap = BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size())
+        _imageBitmap.value = compressedBitmap
+    }
 
     fun captureImage(context: Context, bitmap: Bitmap) {
         val filename = "image.jpg"

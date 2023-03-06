@@ -23,9 +23,9 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+        setContentView(binding.root)
 
-        authViewModel = ViewModelProvider(this, AuthViewModelFactory(repository))
-            .get(AuthVM::class.java)
+        authViewModel = ViewModelProvider(this, AuthViewModelFactory(repository))[AuthVM::class.java]
 
         authViewModel.loggedInUser.observe(this){
             if(it==null)
@@ -34,11 +34,16 @@ class AuthActivity : AppCompatActivity() {
                 ).navigate(R.id.loginFragment)
             else
                 startActivity(
-                    Intent(this,MainActivity::class.java)
+                    Intent(this, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                Intent.FLAG_ACTIVITY_NEW_TASK or
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        )
+                    }
                 )
         }
 
-        setContentView(binding.root)
+
 
     }
 }

@@ -3,6 +3,11 @@ package com.example.skincancerdetector.model
 import android.content.Context
 import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.launch
 
@@ -55,6 +60,10 @@ class AuthVM(private val repository: Repository) : ViewModel() {
             }
         }
     }
+
+    // Function to sign in with Google...
+    // Yeah fuck that, no
+
 }
 
 class AuthViewModelFactory(

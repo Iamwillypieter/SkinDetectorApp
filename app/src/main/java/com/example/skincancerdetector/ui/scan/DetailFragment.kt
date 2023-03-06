@@ -9,7 +9,6 @@ import com.example.skincancerdetector.R
 
 
 class DetailFragment : Fragment() {
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,

@@ -1,6 +1,10 @@
 package com.example.skincancerdetector.data
+import android.content.Context
+import android.content.Intent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.tasks.await
 
 import com.google.firebase.auth.FirebaseAuth
@@ -63,6 +67,7 @@ class Repository {
     fun logout() {
         auth.signOut()
     }
+
 
     //TODO: Buat fungsi buat auto login pake Google... (agak susah, emang, iya...)
 }
