@@ -1,9 +1,7 @@
 package com.example.skincancerdetector.model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.content.Context
+import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.launch
@@ -16,12 +14,13 @@ class AuthVM(private val repository: Repository) : ViewModel() {
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
-    init {
+    init{
         autoLogin()
     }
 
-    private fun autoLogin(){
+    fun autoLogin(): FirebaseUser? {
         _loggedInUser.value = repository.getUser()
+        return _loggedInUser.value
     }
 
     fun login(email: String, password: String) {
@@ -56,4 +55,15 @@ class AuthVM(private val repository: Repository) : ViewModel() {
             }
         }
     }
+}
+
+class AuthViewModelFactory(
+    private val repository: Repository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        when {
+            modelClass.isAssignableFrom(AuthVM::class.java)->{
+                AuthVM(repository) as T
+            }
+            else -> throw Throwable("Unknown ViewModel class: " + modelClass.name)
+        }
 }

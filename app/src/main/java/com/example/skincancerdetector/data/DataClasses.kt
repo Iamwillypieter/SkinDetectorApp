@@ -6,7 +6,7 @@ data class ScanData(//Reminder, no need to code for scanId because, because FIRE
     val userId: String,
     val imageUrl: String,
     val date: Date,
-    val bodypart: String,
+    val bodyPart: String,
     val personAge: Int,
     val tumourAge: Int,
     val notes: String,
