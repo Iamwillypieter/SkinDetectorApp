@@ -14,11 +14,12 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/ic_launcher_background"
+            android:layout_width="130dp"
+            android:layout_height="118dp"
+            android:src="@drawable/skin"
             app:layout_constraintBottom_toTopOf="@id/editTextEmail"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
@@ -27,14 +28,13 @@
             android:id="@+id/editTextEmail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="72dp"
             android:hint="Email"
             android:inputType="textEmailAddress"
             android:padding="16dp"
             android:textColorHint="#AAAAAA"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imageView" />
 
@@ -51,40 +51,72 @@
             app:layout_constraintStart_toStartOf="@id/editTextEmail"
             app:layout_constraintTop_toBottomOf="@id/editTextEmail" />
 
+
         <Button
-            android:id="@+id/buttonLogin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:id="@+id/btn_login"
+            android:layout_width="266dp"
+            android:layout_height="71dp"
+            android:layout_marginTop="50dp"
+            android:enabled="false"
             android:text="Login"
-            android:textColor="#FFFFFF"
-            app:layout_constraintEnd_toEndOf="@id/editTextPassword"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/editTextPassword"
-            app:layout_constraintTop_toBottomOf="@id/editTextPassword" />
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:enabled="true" />
+
+
+        <TextView
+            android:id="@+id/atau"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Atau"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_login"
+            app:layout_constraintVertical_bias="0.007" />
+
+
+        <TextView
+            android:id="@+id/register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:text="Belum Punya Akun? Register"
+            android:textAlignment="center"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_login"
+            app:layout_constraintVertical_bias="0.479" />
 
         <Button
-            android:id="@+id/buttonRegister"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Register"
-            android:textColor="#FFFFFF"
-            app:layout_constraintEnd_toEndOf="@id/buttonLogin"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/buttonLogin"
-            app:layout_constraintTop_toBottomOf="@id/buttonLogin" />
+            android:id="@+id/btn_google_signin"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="286dp"
+            android:layout_height="61dp"
+            android:text="Login Dengan Google"
+            android:textSize="20dp"
+            app:icon="@drawable/google_icon"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.728" />
 
-        <Button
-            android:id="@+id/buttonLoginGoogle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Login with Google"
-            android:textColor="#FFFFFF"
-            app:layout_constraintEnd_toEndOf="@id/buttonRegister"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/buttonRegister"
-            app:layout_constraintTop_toBottomOf="@id/buttonRegister" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
