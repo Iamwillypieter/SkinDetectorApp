@@ -31,19 +31,19 @@ class LoginFragment : Fragment() {
             //Stringnya
         }
 
-        binding.buttonLogin.setOnClickListener {
-            val email = binding.editTextEmail.text.toString()
-            val password = binding.editTextPassword.text.toString()
-            if (email.isEmpty() || password.isEmpty()) {
-                // Buat Toast kalo Email atau Password kosong
-                return@setOnClickListener
-            }
-            authViewModel.login(email, password)
-        } //Login Function
+//        binding.buttonLogin.setOnClickListener {
+//            val email = binding.editTextEmail.text.toString()
+//            val password = binding.editTextPassword.text.toString()
+//            if (email.isEmpty() || password.isEmpty()) {
+//                // Buat Toast kalo Email atau Password kosong
+//                return@setOnClickListener
+//            }
+//            authViewModel.login(email, password)
+//        } //Login Function
 
-        binding.buttonRegister.setOnClickListener {
-            findNavController().navigate(R.id.registerFragment)
-        }
+//        binding.buttonRegister.setOnClickListener {
+//            findNavController().navigate(R.id.registerFragment)
+//        }
 
         return binding.root
     }
