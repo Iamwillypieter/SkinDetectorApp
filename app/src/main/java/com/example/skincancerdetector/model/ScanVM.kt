@@ -33,14 +33,6 @@ class ScanVM(
         _imageBitmap.value = compressedBitmap
     }
 
-    fun captureImage(context: Context, bitmap: Bitmap) {
-        val filename = "image.jpg"
-        val file = File(context.filesDir, filename)
-        val outputStream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        outputStream.close()
-    }
-
     private fun createImageFile(context: Context): File? {
         // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())

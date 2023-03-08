@@ -1,19 +1,19 @@
 package com.example.skincancerdetector.ui.scan
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.Window
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.skincancerdetector.R
 import com.example.skincancerdetector.data.Repository
-import com.example.skincancerdetector.databinding.ActivityAuthBinding
 import com.example.skincancerdetector.databinding.ActivityMainBinding
 import com.example.skincancerdetector.model.*
 
@@ -23,9 +23,11 @@ class MainActivity : AppCompatActivity() {
     private val classifier = ImageClassifier(this)
     private lateinit var scanViewModel: ScanVM
     private lateinit var binding : ActivityMainBinding
+    val REQUEST_IMAGE_CAPTURE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -34,11 +36,29 @@ class MainActivity : AppCompatActivity() {
             ScanViewModelFactory(repository,classifier)
         )[ScanVM::class.java]
 
-        //Buat masukin gambar kedalam viewmodel
-        fun onImageCaptureResult(result: ActivityResult) {
+        val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val imageBitmap = result.data?.extras?.get("data") as Bitmap
+                // There are no request codes
+                val data: Intent? = result.data
+                val imageBitmap = data?.extras?.get("data") as Bitmap
                 scanViewModel.storeImage(imageBitmap,80)
+            }
+        }
+
+        fun dispatchTakePictureIntent() {
+            val cameraPermission = android.Manifest.permission.CAMERA
+            val storagePermission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+            if (ContextCompat.checkSelfPermission(this, cameraPermission) != PackageManager.PERMISSION_GRANTED) {
+                // Permission not granted, request it
+                print("nya")
+                ActivityCompat.requestPermissions(this, arrayOf(cameraPermission, storagePermission), REQUEST_IMAGE_CAPTURE)
+            } else {
+                // Permission granted, launch camera intent
+                print("Meow")
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                resultLauncher.launch(intent)
+                print("Nyaaaa")
             }
         }
 
@@ -50,20 +70,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.navigation_scan -> {
                     //Nyalain kamera/storage
-                    val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    val chooserIntent = Intent.createChooser(pickIntent, "Select Image")
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
-
-                    if (chooserIntent.resolveActivity(this.packageManager) != null) {
-                        registerForActivityResult(
-                            ActivityResultContracts.StartActivityForResult(), ::onImageCaptureResult
-                        ).launch(chooserIntent)
-                    }
+                    dispatchTakePictureIntent()
                     true
                 }
                 R.id.navigation_history -> {
-                    // Handle History button click
+                    //Kalo klik histori
                     true
                 }
                 else -> false
@@ -72,4 +83,8 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
     }
+
+
+
+    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 }
