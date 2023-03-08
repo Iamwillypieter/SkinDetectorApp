@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -27,23 +28,22 @@ class LoginFragment : Fragment() {
 
         authViewModel = ViewModelProvider(requireActivity())[AuthVM::class.java]
         authViewModel.errorMessage.observe(viewLifecycleOwner){
-            //Error handling disini, buat toast aja
-            //Stringnya
+            Toast.makeText(requireActivity(),it,Toast.LENGTH_SHORT).show()
         }
 
-//        binding.buttonLogin.setOnClickListener {
-//            val email = binding.editTextEmail.text.toString()
-//            val password = binding.editTextPassword.text.toString()
-//            if (email.isEmpty() || password.isEmpty()) {
-//                // Buat Toast kalo Email atau Password kosong
-//                return@setOnClickListener
-//            }
-//            authViewModel.login(email, password)
-//        } //Login Function
+        binding.btnLogin.setOnClickListener {
+            val email = binding.editTextEmail.text.toString()
+            val password = binding.editTextPassword.text.toString()
+            if (email.isEmpty() || password.isEmpty()) {
+                // Buat Toast kalo Email atau Password kosong
+                return@setOnClickListener
+            }
+            authViewModel.login(email, password)
+        } //Login Function
 
-//        binding.buttonRegister.setOnClickListener {
-//            findNavController().navigate(R.id.registerFragment)
-//        }
+        binding.register.setOnClickListener {
+            findNavController().navigate(R.id.registerFragment)
+        }
 
         return binding.root
     }
