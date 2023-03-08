@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.example.skincancerdetector.R
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.databinding.ActivityMainBinding
@@ -35,6 +36,14 @@ class MainActivity : AppCompatActivity() {
             this,
             ScanViewModelFactory(repository,classifier)
         )[ScanVM::class.java]
+
+        scanViewModel.imageBitmap.observe(this){
+            if(it!=null) {
+                Navigation.findNavController(
+                    this, binding.fragContainMain.id
+                ).navigate(R.id.formFragment)
+            }
+        }
 
         val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
