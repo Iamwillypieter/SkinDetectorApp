@@ -1,6 +1,7 @@
 package com.example.skincancerdetector.data
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
@@ -14,6 +15,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
 import java.util.Date
 
 class Repository {
@@ -23,6 +27,8 @@ class Repository {
     private val scans = "scan_data"
     private val users = "user_data"
     private val auth = FirebaseAuth.getInstance()
+    private val storageRef = storage.reference
+
 
     suspend fun addScan(scan: ScanData) {
         val scansCollection = firestore.collection("scans")
@@ -35,6 +41,8 @@ class Repository {
         val querySnapshot = query.get().await()
         return querySnapshot.toObjects(ScanData::class.java)
     }
+
+
 
     suspend fun getScan(scanId: String): ScanData? {
         val scansCollection = firestore.collection("scans")
@@ -70,6 +78,19 @@ class Repository {
 
     fun logout() {
         auth.signOut()
+    }
+
+    fun upload(image: Bitmap?,fileName:String, userId: String):String{
+        val baos = ByteArrayOutputStream()
+        image?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+        val path = userId+"Img/"+fileName+".jpg"
+        val imageRef = storageRef.child(path)
+        val uploadTask = imageRef.putBytes(data)
+        uploadTask.addOnFailureListener {
+            throw it
+        }
+        return path
     }
 
 
