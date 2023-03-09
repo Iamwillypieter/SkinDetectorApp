@@ -17,11 +17,8 @@ import java.util.*
 
 class ScanVM(
     private val repository: Repository,
-    private val classifier: ImageClassifier
+    //private val classifier: ImageClassifier
     ) : ViewModel() {
-
-    private var _imageUri = MutableLiveData<Uri?>()
-    val imageUri: LiveData<Uri?> = _imageUri
 
     private val _imageBitmap = MutableLiveData<Bitmap?>()
     val imageBitmap: LiveData<Bitmap?> = _imageBitmap
@@ -31,21 +28,6 @@ class ScanVM(
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
         val compressedBitmap = BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size())
         _imageBitmap.value = compressedBitmap
-    }
-
-    private fun createImageFile(context: Context): File? {
-        // Create an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
-        )
-    }
-
-    private fun analyze(image:Uri){
-        classifier.classifyImage(image)
     }
 
     private val _scans = MutableLiveData<List<ScanData>>()
@@ -77,16 +59,25 @@ class ScanVM(
         }
     }
 
+    //    fun analyze(): Map<String, Float>? { //This is for TfLite Model, but currently unused
+//        return if (imageBitmap.value!=null) {
+//            classifier.classifyImage(imageBitmap.value!!)
+//        } else null
+//    }
+
 }
 
 class ScanViewModelFactory(
     private val repository: Repository,
-    private val classifier: ImageClassifier
+    //private val classifier: ImageClassifier
     ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
         when {
             modelClass.isAssignableFrom(ScanVM::class.java)->{
-                ScanVM(repository,classifier) as T
+                ScanVM(
+                    repository,
+                    //classifier
+                ) as T
             }
             else -> throw Throwable("Unknown ViewModel class: " + modelClass.name)
         }

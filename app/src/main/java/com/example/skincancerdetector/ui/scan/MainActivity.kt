@@ -21,10 +21,10 @@ import com.example.skincancerdetector.model.*
 class MainActivity : AppCompatActivity() {
 
     private val repository = Repository()
-    private val classifier = ImageClassifier(this)
+    //private val classifier = ImageClassifier(this)
     private lateinit var scanViewModel: ScanVM
     private lateinit var binding : ActivityMainBinding
-    val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_IMAGE_CAPTURE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,10 @@ class MainActivity : AppCompatActivity() {
 
         scanViewModel = ViewModelProvider(
             this,
-            ScanViewModelFactory(repository,classifier)
+            ScanViewModelFactory(
+                repository,
+                //classifier
+            )
         )[ScanVM::class.java]
 
         scanViewModel.imageBitmap.observe(this){
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 // There are no request codes
                 val data: Intent? = result.data
                 val imageBitmap = data?.extras?.get("data") as Bitmap
-                scanViewModel.storeImage(imageBitmap,80)
+                scanViewModel.storeImage(imageBitmap,100)
             }
         }
 

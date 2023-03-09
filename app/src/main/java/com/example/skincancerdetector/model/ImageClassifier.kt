@@ -1,6 +1,7 @@
 package com.example.skincancerdetector.model
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import org.tensorflow.lite.Interpreter
@@ -13,6 +14,10 @@ class ImageClassifier(private val context: Context) {
 
     private lateinit var interpreter: Interpreter
 
+    init {
+        loadModel("model_unquant.tflite")
+    }
+
     fun loadModel(modelFilename: String) {
         val fileDescriptor = context.assets.openFd(modelFilename)
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
@@ -24,15 +29,12 @@ class ImageClassifier(private val context: Context) {
         interpreter = Interpreter(modelBuffer)
     }
 
-    fun classifyImage(imageUri: Uri): Map<String, Float> {
-        val bitmap = imageUri.let { context.contentResolver.openInputStream(it)?.use { inputStream ->
-            BitmapFactory.decodeStream(inputStream)
-        } }
+    fun classifyImage(bitmap: Bitmap): Map<String, Float> {
         val inputBuffer = ByteBuffer.allocateDirect(1 * IMAGE_SIZE * IMAGE_SIZE * 3 * 4)
         inputBuffer.order(ByteOrder.nativeOrder())
 
         val pixels = IntArray(IMAGE_SIZE * IMAGE_SIZE)
-        bitmap?.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var pixel = 0
         for (i in 0 until IMAGE_SIZE) {

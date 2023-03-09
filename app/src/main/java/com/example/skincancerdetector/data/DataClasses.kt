@@ -4,11 +4,17 @@ import java.util.*
 
 data class ScanData(//Reminder, no need to code for scanId because, because FIREBASE!!!
     val userId: String,
-    val imageUrl: String,
-    val date: Date,
+    val patientName: String,
     val bodyPart: String,
-    val personAge: Int,
-    val tumourAge: Int,
+    val age: Int,
+    val gender: String,
     val notes: String,
     val results: Map<String, Float>,
+)
+
+data class UserData(
+    val userId: String,
+    val name: String,
+    val age: Int,
+    val gender: String
 )
