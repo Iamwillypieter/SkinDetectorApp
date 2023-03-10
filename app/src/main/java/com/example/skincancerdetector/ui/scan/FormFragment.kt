@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.example.skincancerdetector.data.ScanData
 import com.example.skincancerdetector.databinding.FragmentFormBinding
 import com.example.skincancerdetector.model.ScanVM
 
@@ -18,10 +19,7 @@ class FormFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentFormBinding.inflate(inflater,container,false)
-        val name = binding.edName.text.toString()
-        val bodyPart = binding.edBody.text.toString()
-        val age = binding.edAge.text.toString().toIntOrNull()
-        val gender = binding.edGender.text.toString()
+
 
         scanViewModel = ViewModelProvider(requireActivity())[ScanVM::class.java]
         val userId = scanViewModel.getUserId()
@@ -33,18 +31,26 @@ class FormFragment : Fragment() {
                 .into(binding.imageView2)
         }
 
-        scanViewModel.resultData.observe(requireActivity()){results ->
-            if (results!=null && age!=null && userId!=null){
-                scanViewModel.addScan(userId, name, bodyPart, age, gender, "null", results)
-            }
-        }
-
         binding.btnAnalyze.setOnClickListener {
+            val name = binding.edName.text.toString()
+            val bodyPart = binding.edBody.text.toString()
+            val age = binding.edAge.text.toString().toIntOrNull()
+            val gender = binding.edGender.text.toString()
             if (name.isEmpty() || bodyPart.isEmpty() || (age == null) || gender.isEmpty()) {
                 // Make a toast that some of the form are empty
-                scanViewModel.uploadPicture(name)
+                return@setOnClickListener
             }
-            scanViewModel.uploadPicture(name)
+            scanViewModel.handleAnalyzeButtonClick(
+                ScanData(
+                    "",
+                    name,
+                    bodyPart,
+                    0,
+                    gender,
+                    null,
+                    ""
+                )
+            )
         }
 
         return binding.root

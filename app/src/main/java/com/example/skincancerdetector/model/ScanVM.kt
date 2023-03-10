@@ -5,8 +5,10 @@ import android.graphics.BitmapFactory
 import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.data.ScanData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,20 +23,19 @@ class ScanVM(
     val imageBitmap: LiveData<Bitmap?> = _imageBitmap
 
     private val loadingScan = MutableLiveData<Boolean>()
+    private val fuckYou = MutableLiveData<Boolean>()
 
-    private val _resultData = MutableLiveData<Map<String,Float>?>()
-    val resultData : LiveData<Map<String,Float>?> = _resultData
+    var path: String? = null
 
-    var path : String? = null
-
-    fun getUserId():String?{
+    fun getUserId(): String? {
         return repository.getUser()?.uid
     }
 
-    fun storeImage(bitmap: Bitmap, quality:Int) {
+    fun storeImage(bitmap: Bitmap, quality: Int) {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-        val compressedBitmap = BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size())
+        val compressedBitmap =
+            BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size())
         _imageBitmap.value = compressedBitmap
     }
 
@@ -42,87 +43,74 @@ class ScanVM(
     val scans: LiveData<List<ScanData>>
         get() = _scans
 
-    fun addScan(
-        scanId: String,
-        name: String,
-        bodyPart: String,
-        age: Int,
-        gender: String,
-        note: String,
-        results: Map<String, Float>
-    ) {
-        viewModelScope.launch {
-            val scan = path?.let { ScanData(scanId,name,bodyPart, age, gender, note, results, it) }
-            if (scan != null) {
-                repository.addScan(scan)
-            }
-        }
-    }
-
-    fun getScans(userId: String) {
-        viewModelScope.launch {
-            val scans = repository.getScans(userId)
-            _scans.value = scans
-        }
-    }
-
-    fun updateScan(scanId: String, notes: String) {
-        viewModelScope.launch {
-            repository.updateScan(scanId, notes)
-        }
-    }
-
-    fun deleteScan(scanId: String) {
-        viewModelScope.launch {
-            repository.deleteScan(scanId)
-        }
-    }
     fun getCurrentDateAsString(format: String = "yyyy-MM-dd"): String {
         val dateFormat = SimpleDateFormat(format, Locale.getDefault())
         return dateFormat.format(Date())
     }
 
-    fun uploadPicture(name:String) {
-        val fileName = name + getCurrentDateAsString()
-        path = repository.upload(
-            imageBitmap.value,
-            fileName,
-            repository.getUser()!!.uid
-        )
-        analyzePicture()
-    }
-
-    fun analyzePicture(){
-        viewModelScope.launch{
+    fun handleAnalyzeButtonClick(scanData: ScanData) {
+        viewModelScope.launch {
             loadingScan.value = true
-            val data = fakeAnalyze()
-            _resultData.value = data.also {
+            try {
+                val bitmap = imageBitmap.value
+                val userId = getUserId() ?: throw Exception("User ID is null")
+                if (bitmap == null) {
+                    throw Exception("Bitmap is null")
+                }
+                val documentId = createNewDocument(scanData)
+                val fileName = "${scanData.patientName}${getCurrentDateAsString()}"
+                val downloadUrl = uploadImage(bitmap, fileName, userId)
+                val result = fakeAnalyze()
+                updateDocument(documentId, downloadUrl, result)
+                fuckYou.value = false
+            } catch (e: Exception) {
+                print("Nya???")
+                fuckYou.value = true
+            } finally {
                 loadingScan.value = false
             }
         }
     }
+
+
+    suspend fun createNewDocument(scanData: ScanData): String {
+        return withContext(Dispatchers.IO) {
+            repository.createNewDocument(scanData)
+
+        }
+    }
+
+    suspend fun uploadImage(bitmap: Bitmap, fileName: String, userId: String): String {
+        return withContext(Dispatchers.IO) {
+            repository.uploadImage(bitmap, fileName, userId)
+        }
+    }
+
+    suspend fun updateDocument(
+        documentId: String,
+        downloadUrl: String,
+        result: Map<String, Float>
+    ) {
+        return withContext(Dispatchers.IO) {
+            repository.updateDocument(documentId, downloadUrl, result)
+        }
+    }
+
 
     private suspend fun fakeAnalyze(): Map<String, Float> {
         val labels = listOf("MEL", "AK", "UNK", "VASC", "BKL", "NV", "BCC", "DF", "SCC")
         delay(10000)
         return labels.associateWith { Random.nextFloat() }
     }
-
-    //    fun analyze(): Map<String, Float>? { //This is for TfLite Model, but currently unused
-//        return if (imageBitmap.value!=null) {
-//            classifier.classifyImage(imageBitmap.value!!)
-//        } else null
-//    }
-
 }
 
 class ScanViewModelFactory(
     private val repository: Repository,
     //private val classifier: ImageClassifier
-    ) : ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
         when {
-            modelClass.isAssignableFrom(ScanVM::class.java)->{
+            modelClass.isAssignableFrom(ScanVM::class.java) -> {
                 ScanVM(
                     repository,
                     //classifier
@@ -131,3 +119,5 @@ class ScanViewModelFactory(
             else -> throw Throwable("Unknown ViewModel class: " + modelClass.name)
         }
 }
+
+
