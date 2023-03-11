@@ -48,11 +48,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         scanViewModel.scanResult.observe(this){
-            if(it!=null){
-                Navigation.findNavController(
-                    this,binding.fragContainMain.id
-                ).navigate(R.id.analysisFragment)
-            }
+        //Ini Nanti
+        //            if(it!=null){
+//                Navigation.findNavController(
+//                    this,binding.fragContainMain.id
+//                ).navigate(R.id.analysisFragment)
+//            }
         }
 
         val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
