@@ -55,11 +55,14 @@ class ScanVM(
         viewModelScope.launch {
             loadingScan.value = true
             try {
+                print("Access Bitmap")
                 val bitmap = imageBitmap.value
+                print("Get User ID")
                 val userId = getUserId() ?: throw Exception("User ID is null")
                 if (bitmap == null) {
                     throw Exception("Bitmap is null")
                 }
+                print("Make new Document")
                 val documentId = createNewDocument(scanData)
                 val fileName = "${scanData.patientName}${getCurrentDateAsString()}"
                 val downloadUrl = uploadImage(bitmap, fileName, userId)
@@ -67,7 +70,7 @@ class ScanVM(
                 updateDocument(documentId, downloadUrl, result)
                 fuckYou.value = false
             } catch (e: Exception) {
-                print("Nya???")
+                print("Nya???"+e)
                 fuckYou.value = true
             } finally {
                 loadingScan.value = false

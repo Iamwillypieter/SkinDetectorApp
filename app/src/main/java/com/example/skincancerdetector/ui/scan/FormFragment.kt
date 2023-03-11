@@ -45,9 +45,10 @@ class FormFragment : Fragment() {
                     "",
                     name,
                     bodyPart,
-                    0,
+                    age,
                     gender,
-                    null,
+                    mapOf(
+                        "FUCK" to 1.99f),
                     ""
                 )
             )
