@@ -86,7 +86,8 @@ class Repository {
         val documentRef = firestore.collection("scans").document(documentId)
         val updateData = mapOf(
             "imageUrl" to downloadUrl,
-            "result" to result
+            "result" to result,
+            "userId" to (getUser()?.uid ?: "")
         )
         documentRef.update(updateData).await()
         return documentRef.get().await().toObject()
