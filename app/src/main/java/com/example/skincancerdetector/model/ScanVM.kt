@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.data.ScanData
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -22,8 +23,8 @@ class ScanVM(
     private val _imageBitmap = MutableLiveData<Bitmap?>()
     val imageBitmap: LiveData<Bitmap?> = _imageBitmap
 
-    private val _scanResult = MutableLiveData<ScanData>()
-    val scanResult: LiveData<ScanData> = _scanResult
+    private val _scanResult = MutableLiveData<ScanData?>()
+    val scanResult: LiveData<ScanData?> = _scanResult
 
     private val loadingScan = MutableLiveData<Boolean>()
     private val fuckYou = MutableLiveData<Boolean>()
@@ -41,10 +42,6 @@ class ScanVM(
             BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size())
         _imageBitmap.value = compressedBitmap
     }
-
-    private val _scans = MutableLiveData<List<ScanData>>()
-    val scans: LiveData<List<ScanData>>
-        get() = _scans
 
     fun getCurrentDateAsString(format: String = "yyyy-MM-dd"): String {
         val dateFormat = SimpleDateFormat(format, Locale.getDefault())
@@ -67,7 +64,7 @@ class ScanVM(
                 val fileName = "${scanData.patientName}${getCurrentDateAsString()}"
                 val downloadUrl = uploadImage(bitmap, fileName, userId)
                 val result = fakeAnalyze()
-                updateDocument(documentId, downloadUrl, result)
+                _scanResult.value = updateDocument(documentId, downloadUrl, result)
                 fuckYou.value = false
             } catch (e: Exception) {
                 print("Nya???"+e)
@@ -96,7 +93,7 @@ class ScanVM(
         documentId: String,
         downloadUrl: String,
         result: Map<String, Float>
-    ) {
+    ) :ScanData?{
         return withContext(Dispatchers.IO) {
             repository.updateDocument(documentId, downloadUrl, result)
         }

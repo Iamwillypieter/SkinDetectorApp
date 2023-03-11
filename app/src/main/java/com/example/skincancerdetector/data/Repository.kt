@@ -13,8 +13,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -61,7 +63,7 @@ class Repository {
         val baos = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
-        val path = "$userId/Img/$fileName.jpg"
+        val path = "$userId/Scans/$fileName.jpg"
         val imageRef = storageRef.child(path)
         return try {
             imageRef.putBytes(data).await()
@@ -80,13 +82,14 @@ class Repository {
     }
 
     // Function to update a Firestore document with the download URL and analysis result
-    suspend fun updateDocument(documentId: String, downloadUrl: String, result: Map<String,Float>): Void? {
+    suspend fun updateDocument(documentId: String, downloadUrl: String, result: Map<String,Float>): ScanData? {
         val documentRef = firestore.collection("scans").document(documentId)
         val updateData = mapOf(
             "imageUrl" to downloadUrl,
             "result" to result
         )
-        return documentRef.update(updateData).await()
+        documentRef.update(updateData).await()
+        return documentRef.get().await().toObject()
     }
 
 

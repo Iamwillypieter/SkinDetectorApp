@@ -22,8 +22,6 @@ class FormFragment : Fragment() {
 
 
         scanViewModel = ViewModelProvider(requireActivity())[ScanVM::class.java]
-        val userId = scanViewModel.getUserId()
-
         scanViewModel.imageBitmap.observe(requireActivity()){
             Glide.with(this)
                 .load(it)

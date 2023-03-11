@@ -8,8 +8,8 @@ data class ScanData(//Reminder, no need to code for scanId because, because FIRE
     val bodyPart: String = "",
     val age: Int = 0,
     val gender: String = "",
-    val results: Map<String, Float>?,
-    val image : String = ""
+    val result: Map<String, Float> = emptyMap(),
+    val imageUrl : String = ""
 )
 
 data class UserData(

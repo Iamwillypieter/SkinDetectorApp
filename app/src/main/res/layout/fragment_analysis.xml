@@ -41,7 +41,7 @@
                 android:padding="16dp">
 
                 <ImageView
-                    android:id="@+id/imageView13"
+                    android:id="@+id/ivAnalysis"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -55,8 +55,8 @@
                     android:layout_marginStart="16dp"
                     android:text="Lorem Ipsum"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imageView13"
-                    app:layout_constraintTop_toTopOf="@+id/imageView13" />
+                    app:layout_constraintStart_toEndOf="@+id/ivAnalysis"
+                    app:layout_constraintTop_toTopOf="@+id/ivAnalysis" />
 
                 <ImageView
                     android:id="@+id/imageView14"
@@ -100,7 +100,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView2" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/rvScans"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
