@@ -22,6 +22,9 @@ class ScanVM(
     private val _imageBitmap = MutableLiveData<Bitmap?>()
     val imageBitmap: LiveData<Bitmap?> = _imageBitmap
 
+    private val _scanResult = MutableLiveData<ScanData>()
+    val scanResult: LiveData<ScanData> = _scanResult
+
     private val loadingScan = MutableLiveData<Boolean>()
     private val fuckYou = MutableLiveData<Boolean>()
 

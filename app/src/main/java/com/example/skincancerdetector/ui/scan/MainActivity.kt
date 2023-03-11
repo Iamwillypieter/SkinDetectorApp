@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     //private val classifier = ImageClassifier(this)
     private lateinit var scanViewModel: ScanVM
     private lateinit var binding : ActivityMainBinding
-    private val REQUEST_IMAGE_CAPTURE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +47,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        scanViewModel.scanResult.observe(this){
+            if(it!=null){
+                Navigation.findNavController(
+                    this,binding.fragContainMain.id
+                ).navigate(R.id.analysisFragment)
+            }
+        }
+
         val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // There are no request codes
@@ -63,11 +70,9 @@ class MainActivity : AppCompatActivity() {
 
             if (ContextCompat.checkSelfPermission(this, cameraPermission) != PackageManager.PERMISSION_GRANTED) {
                 // Permission not granted, request it
-                print("nya")
-                ActivityCompat.requestPermissions(this, arrayOf(cameraPermission, storagePermission), REQUEST_IMAGE_CAPTURE)
+                print("nyaa?")
             } else {
                 // Permission granted, launch camera intent
-                print("Meow")
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 resultLauncher.launch(intent)
                 print("Nyaaaa")
