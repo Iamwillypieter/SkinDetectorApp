@@ -57,36 +57,36 @@ class Repository {
     }
 
     //Upload Image
-    fun uploadImage(image: Bitmap,fileName:String, userId: String):String{
+    suspend fun uploadImage(image: Bitmap, fileName: String, userId: String): String {
         val baos = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
-        val path = userId+"Img/"+fileName+".jpg"
+        val path = "$userId/Img/$fileName.jpg"
         val imageRef = storageRef.child(path)
-        val uploadTask = imageRef.putBytes(data)
-        uploadTask.addOnFailureListener {
-            throw it
+        return try {
+            imageRef.putBytes(data).await()
+            val downloadUrl = imageRef.downloadUrl.await()
+            downloadUrl.toString()
+        } catch (e: Exception) {
+            throw e
         }
-        uploadTask.addOnSuccessListener {
-
-        }
-        return imageRef.downloadUrl.toString()
     }
 
     //Upload form data
-    fun createNewDocument(scanData: ScanData): String {
+    suspend fun createNewDocument(scanData: ScanData): String {
         val collectionRef = firestore.collection("scans")
-        return collectionRef.add(scanData).result.id
+        val documentRef = collectionRef.add(scanData).await()
+        return documentRef.id
     }
 
     // Function to update a Firestore document with the download URL and analysis result
-    fun updateDocument(documentId: String, downloadUrl: String, result: Map<String,Float>): Task<Void> {
+    suspend fun updateDocument(documentId: String, downloadUrl: String, result: Map<String,Float>): Void? {
         val documentRef = firestore.collection("scans").document(documentId)
         val updateData = mapOf(
             "imageUrl" to downloadUrl,
             "result" to result
         )
-        return documentRef.update(updateData)
+        return documentRef.update(updateData).await()
     }
 
 
