@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
+    app:cardBackgroundColor="@color/md_theme_light_primaryContainer"
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,6 +29,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:text="Lorem Ipsum"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/tvRowPercent"
@@ -41,6 +43,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:text="TextView"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:layout_constraintBottom_toBottomOf="@+id/imageView3"
             app:layout_constraintEnd_toStartOf="@+id/tvRowPercent"
             app:layout_constraintStart_toEndOf="@+id/imageView3"
@@ -52,6 +55,7 @@
             android:layout_height="0dp"
             android:gravity="center"
             android:text="%##"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
