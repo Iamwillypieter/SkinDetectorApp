@@ -68,17 +68,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val documentLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK){
-                val data: Intent? = result.data
-                val imageBitmap = data?.extras?.get("data") as Bitmap
-                scanViewModel.storeImage(imageBitmap, 100)
-            }
+        val documentLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            // Handle the result of the file picker intent here
+            // The selected image can be loaded from the URI using a ContentResolver
+            val contentResolver = applicationContext.contentResolver
+            val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            scanViewModel.storeImage(imageBitmap, 100)
         }
 
         fun dispatchTakePictureIntent() {
             val cameraPermission = android.Manifest.permission.CAMERA
-            val storagePermission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            val storagePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
             val pickImage = "Pick Image"
             val takePhoto = "Take Photo"
 
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                             // Permission granted, launch file picker intent
                             val intent = Intent(Intent.ACTION_GET_CONTENT)
                             intent.type = "image/*" // only allow image file types
-                            documentLauncher.launch(intent)
+                            documentLauncher.launch(intent.type)
                         }
                     }
                     takePhoto -> {

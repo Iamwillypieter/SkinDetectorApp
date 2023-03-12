@@ -116,7 +116,6 @@ class ScanViewModelFactory(
             modelClass.isAssignableFrom(ScanVM::class.java) -> {
                 ScanVM(
                     repository,
-                    //classifier
                 ) as T
             }
             else -> throw Throwable("Unknown ViewModel class: " + modelClass.name)
