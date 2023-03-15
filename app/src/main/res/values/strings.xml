@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Skin Cancer Detector</string>
     <!-- TODO: Remove or change this placeholder text -->
-        <string name="hello_blank_fragment">WELCOME! TO THE RICE FIELDS!!!</string>
+    <string name="hello_blank_fragment">WELCOME! TO THE RICE FIELDS!!!</string>
     <string name="title_activity_bottom_nav">BottomNavActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -9,4 +9,38 @@
     <string name="title_scan">Scan</string>
     <string name="title_history">History</string>
     <string name="sign_in_with_google" />
+
+    <!--     -->
+    <string name="title_ml">Melanoma: </string>
+    <string name="title_ak">Actinic Keratosis</string>
+    <string name="title_unk">Unknown</string>
+    <string name="title_vasc">Vascular Lesion</string>
+    <string name="title_bkl">Benign Keratosis</string>
+    <string name="title_nv">Melanocytic Nevus</string>
+    <string name="title_bcc">Basal Cell Carcinoma</string>
+    <string name="title_df">Dermatofibroma</string>
+    <string name="title_scc">Squamous Cell Carcinoma</string>
+
+    <string name="desc_mel">It is a type of skin cancer that develops in the melanocytes, which are the cells that produce pigment in the skin. It can appear as a new mole or an existing mole that changes in size, shape, or color. It can be deadly if it is not detected and treated early.</string>
+    <string name="desc_ak">It is a precancerous skin condition that develops due to long-term sun exposure. It appears as rough, scaly, or crusty patches on the skin, typically on areas that receive the most sun exposure, such as the face, scalp, ears, and back of the hands.</string>
+    <string name="desc_unk">Unknown Skin Condition</string>
+    <string name="desc_vasc">It is a type of skin lesion that involves blood vessels. It can appear as a birthmark, a red patch, or a cluster of blood vessels on the skin. Some types of vascular lesions are harmless, while others may require treatment. Examples include port-wine stains, cherry angiomas, and hemangiomas.</string>
+    <string name="desc_bkl">It is a type of skin growth that is non-cancerous and usually appears as a scaly, rough, or warty patch on the skin. It can be caused by sun exposure, genetics, or aging. It typically does not require treatment, but it can be removed if it becomes bothersome or unsightly.</string>
+    <string name="desc_nv">It is a type of mole that is usually benign and appears as a small, dark spot on the skin. It can be raised or flat and can be present at birth or develop later in life. It is typically harmless but should be monitored for changes.</string>
+    <string name="desc_bcc">It is the most common type of skin cancer that develops in the basal cells of the skin. It usually appears as a small, shiny bump or a pinkish patch on the skin, and it can grow slowly over time. It is commonly found on areas of the skin that are exposed to the sun.</string>
+    <string name="desc_df">It is a benign skin growth that usually appears as a firm, round bump on the skin. It is typically brown or reddish-brown in color and can be caused by injury or irritation to the skin. It is usually harmless but can be removed if it becomes bothersome.</string>
+    <string name="desc_scc">It is a type of skin cancer that develops in the squamous cells of the skin. It typically appears as a red, scaly patch or a wart-like bump on the skin. It can grow quickly and can spread to other parts of the body if left untreated.</string>
+
+
+    <!-- TODO: Details on the skin condition -->
+    <string name="detail_mel"></string>
+    <string name="detail_ak"></string>
+    <string name="detail_unk"></string>
+    <string name="detail_vasc"></string>
+    <string name="detail_bkl"></string>
+    <string name="detail_nv"></string>
+    <string name="detail_bcc"></string>
+    <string name="detail_df"></string>
+    <string name="detail_scc"></string>
+
 </resources>

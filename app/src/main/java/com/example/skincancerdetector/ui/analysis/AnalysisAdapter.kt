@@ -1,17 +1,30 @@
-package com.example.skincancerdetector.ui.scan
+package com.example.skincancerdetector.ui.analysis
 
-import android.service.autofill.UserData
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.skincancerdetector.data.Disease
 import com.example.skincancerdetector.data.ScanData
 import com.example.skincancerdetector.databinding.ScanRowBinding
 
-class ScanAdapter(private val scanData:ScanData) : RecyclerView.Adapter<ViewHolderScans>(){
+class AnalysisAdapter(
+    private val scanData:ScanData,
+    private val diseases:List<Disease>
+) : RecyclerView.Adapter<ViewHolderScans>(){
     // Put Someting Here :)
     private lateinit var onItemClickCallback: OnItemClickCallback
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback
+    }
+
+    fun getName(key: String): String {
+        val matchingDisease = diseases.find { disease -> disease.id == key }
+        return matchingDisease?.name ?: "Unknown disease"
+    }
+
+    fun getDesc(key:String): String{
+        val matchingDisease = diseases.find { disease -> disease.id == key }
+        return matchingDisease?.description ?: "The Scanner do not know what this is"
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderScans {
         val binding = ScanRowBinding.inflate(
@@ -32,8 +45,9 @@ class ScanAdapter(private val scanData:ScanData) : RecyclerView.Adapter<ViewHold
         scanResultEntries.forEachIndexed { index, (key, value) ->
             if (index == position) {
                 // set the data for this item in the ViewHolder
-                holder.binding.tvRowTitle.text = key
+                holder.binding.tvRowTitle.text = getName(key)
                 holder.binding.tvRowPercent.text = "%.2f%%".format(value * 100)
+                holder.binding.tvRowDetail.text = getDesc(key)
                 holder.binding.root.setOnClickListener {
                     onItemClickCallback.onItemClicked(key)
                 }

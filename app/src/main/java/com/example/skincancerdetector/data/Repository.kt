@@ -29,16 +29,11 @@ class Repository {
 
     private val firestore = Firebase.firestore
     private val storage = Firebase.storage
-    private val scans = "scan_data"
+    private val scans = "scans"
     private val users = "user_data"
+    private val disease = "diseases"
     private val auth = FirebaseAuth.getInstance()
     private val storageRef = storage.reference
-
-
-    suspend fun addScan(scan: ScanData) {
-        val scansCollection = firestore.collection("scans")
-        scansCollection.add(scan).await()
-    }
 
     fun getUser():FirebaseUser?{
         return auth.currentUser
@@ -63,7 +58,7 @@ class Repository {
         val baos = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
-        val path = "$userId/Scans/$fileName.jpg"
+        val path = "UserData/$userId/Scans/$fileName.jpg"
         val imageRef = storageRef.child(path)
         return try {
             imageRef.putBytes(data).await()
@@ -76,24 +71,46 @@ class Repository {
 
     //Upload form data
     suspend fun createNewDocument(scanData: ScanData): String {
-        val collectionRef = firestore.collection("scans")
+        val collectionRef = firestore.collection(scans)
         val documentRef = collectionRef.add(scanData).await()
         return documentRef.id
     }
 
     // Function to update a Firestore document with the download URL and analysis result
-    suspend fun updateDocument(documentId: String, downloadUrl: String, result: Map<String,Float>): ScanData? {
-        val documentRef = firestore.collection("scans").document(documentId)
+    suspend fun updateDocument(
+        documentId: String,
+        downloadUrl: String,
+        result: Map<String,Float>,
+        timestamp: String
+    ): ScanData? {
+        val documentRef = firestore.collection(scans).document(documentId)
         val updateData = mapOf(
             "imageUrl" to downloadUrl,
             "result" to result,
-            "userId" to (getUser()?.uid ?: "")
+            "userId" to (getUser()?.uid ?: ""),
+            "timestamp" to timestamp
         )
         documentRef.update(updateData).await()
         return documentRef.get().await().toObject()
     }
 
+    suspend fun getSpecificScanData(documentId: String):ScanData?{
+        val documentRef = firestore.collection(scans).document(documentId)
+        return documentRef.get().await().toObject()
+    }
 
+    suspend fun getAllUserScanData():List<ScanData>?{
+        val userId = getUser()?.uid
+        return if(userId!=null){
+            val documentRef = firestore.collection(scans).whereEqualTo("userId",userId)
+            documentRef.get().await().map{it.toObject()}
+        } else null
+    }
+
+    suspend fun getAllDiseases(): List<Disease> {
+        val collectionRef = firestore.collection(disease)
+        return collectionRef.get().await().map{it.toObject()}
+    }
 
     //TODO: Buat fungsi buat auto login pake Google... (agak susah, emang, iya...)
 }

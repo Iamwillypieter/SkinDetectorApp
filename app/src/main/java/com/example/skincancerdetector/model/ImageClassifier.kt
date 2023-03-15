@@ -67,7 +67,7 @@ package com.example.skincancerdetector.model
 //    companion object {
 //        private const val IMAGE_SIZE = 224
 //        private const val OUTPUT_CLASSES = 9
-//        private val LABELS = arrayOf("Mel", "AK", "UNK", "VASC", "BKL", "NV", "BCC", "DF", "SCC")
+//        private val LABELS = arrayOf("ML", "AK", "UNK", "VASC", "BKL", "NV", "BCC", "DF", "SCC")
 //    }
 //
 //}

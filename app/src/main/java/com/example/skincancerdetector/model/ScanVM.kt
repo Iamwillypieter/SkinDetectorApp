@@ -23,6 +23,9 @@ class ScanVM(
     private val _imageBitmap = MutableLiveData<Bitmap?>()
     val imageBitmap: LiveData<Bitmap?> = _imageBitmap
 
+    private val _allScanData = MutableLiveData<List<ScanData>>()
+    val allScanData: LiveData<List<ScanData>> = _allScanData
+
     private val _scanResult = MutableLiveData<ScanData?>()
     val scanResult: LiveData<ScanData?> = _scanResult
 
@@ -35,6 +38,10 @@ class ScanVM(
         return repository.getUser()?.uid
     }
 
+    init{
+        getAllUserAnalysisData()
+    }
+
     fun storeImage(bitmap: Bitmap, quality: Int) {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
@@ -43,7 +50,7 @@ class ScanVM(
         _imageBitmap.value = compressedBitmap
     }
 
-    fun getCurrentDateAsString(format: String = "yyyy-MM-dd"): String {
+    fun getCurrentDateAsString(format: String = "yyyy-MM-dd-mm-ss"): String {
         val dateFormat = SimpleDateFormat(format, Locale.getDefault())
         return dateFormat.format(Date())
     }
@@ -59,12 +66,13 @@ class ScanVM(
                 if (bitmap == null) {
                     throw Exception("Bitmap is null")
                 }
+                val date = getCurrentDateAsString()
                 print("Make new Document")
-                val documentId = createNewDocument(scanData)
-                val fileName = "${scanData.patientName}${getCurrentDateAsString()}"
-                val downloadUrl = uploadImage(bitmap, fileName, userId)
+                val documentId = repository.createNewDocument(scanData)
+                val fileName = "${scanData.patientName}${date}"
+                val downloadUrl = repository.uploadImage(bitmap, fileName, userId)
                 val result = fakeAnalyze()
-                _scanResult.value = updateDocument(documentId, downloadUrl, result)
+                _scanResult.value = repository.updateDocument(documentId, downloadUrl, result, date)
                 fuckYou.value = false
             } catch (e: Exception) {
                 print("Nya???"+e)
@@ -75,33 +83,40 @@ class ScanVM(
         }
     }
 
-
-    suspend fun createNewDocument(scanData: ScanData): String {
-        return withContext(Dispatchers.IO) {
-            repository.createNewDocument(scanData)
-
+    fun getAllUserAnalysisData(){
+        viewModelScope.launch {
+            _allScanData.value = repository.getAllUserScanData()
         }
+
     }
 
-    suspend fun uploadImage(bitmap: Bitmap, fileName: String, userId: String): String {
-        return withContext(Dispatchers.IO) {
-            repository.uploadImage(bitmap, fileName, userId)
-        }
-    }
 
-    suspend fun updateDocument(
-        documentId: String,
-        downloadUrl: String,
-        result: Map<String, Float>
-    ) :ScanData?{
-        return withContext(Dispatchers.IO) {
-            repository.updateDocument(documentId, downloadUrl, result)
-        }
-    }
+//    suspend fun createNewDocument(scanData: ScanData): String {
+//        return withContext(Dispatchers.IO) {
+//            repository.createNewDocument(scanData)
+//
+//        }
+//    }
+//
+//    suspend fun uploadImage(bitmap: Bitmap, fileName: String, userId: String): String {
+//        return withContext(Dispatchers.IO) {
+//            repository.uploadImage(bitmap, fileName, userId)
+//        }
+//    }
+//
+//    suspend fun updateDocument(
+//        documentId: String,
+//        downloadUrl: String,
+//        result: Map<String, Float>
+//    ) :ScanData?{
+//        return withContext(Dispatchers.IO) {
+//            repository.updateDocument(documentId, downloadUrl, result)
+//        }
+//    }
 
 
     private suspend fun fakeAnalyze(): Map<String, Float> {
-        val labels = listOf("MEL", "AK", "UNK", "VASC", "BKL", "NV", "BCC", "DF", "SCC")
+        val labels = listOf("ML", "AK", "UNK", "VASC", "BKL", "NV", "BCC", "DF", "SCC")
         delay(10000)
         return labels.associateWith { Random.nextFloat() }
     }
