@@ -58,7 +58,6 @@ class DetailFragment : Fragment() {
         binding.tvDetailName.text = disease.name
         binding.tvDetailDescription.text = disease.description
         Log.d("FFFFUCK YOU!!!", disease.description)
-        binding.tvDetailShortDesc.text = "Fuck Off"
 
         for (imageUrl in disease.images) {
             val imageView = ImageView(requireActivity())

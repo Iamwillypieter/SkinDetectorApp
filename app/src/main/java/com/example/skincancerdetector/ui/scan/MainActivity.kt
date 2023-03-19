@@ -23,6 +23,7 @@ import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.databinding.ActivityMainBinding
 import com.example.skincancerdetector.model.*
 import com.example.skincancerdetector.ui.analysis.AnalysisActivity
+import com.example.skincancerdetector.ui.utility.LoadingFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,18 +49,29 @@ class MainActivity : AppCompatActivity() {
 
         scanViewModel.scanResult.observe(this){
             if(it!=null){
-//                val fragmentManager = supportFragmentManager
-//
-//                // Add the HomeFragment to the backstack
-//                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-//                fragmentManager.beginTransaction()
-//                    .replace(R.id.fragContainMain, HomeFragment())
-//                    .addToBackStack(null)
-//                    .commit()
+                val fragmentManager = supportFragmentManager
+
+                // Add the HomeFragment to the backstack with a unique tag
+                fragmentManager.beginTransaction()
+                    .replace(R.id.fragContainMain, HomeFragment())
+                    .addToBackStack("HomeFragment")
+                    .commit()
+
+                // Remove all other fragments from the backstack
+                fragmentManager.popBackStack("HomeFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
                 startActivity(
                     Intent(this, AnalysisActivity::class.java)
                         .putExtra(AnalysisActivity.SCAN_DATA, it)
                 )
+            }
+        }
+
+        scanViewModel.loadingScan.observe(this){ isLoading ->
+            if (isLoading){
+                supportFragmentManager.beginTransaction()
+                    .replace(binding.fragContainMain.id, LoadingFragment())
+                    .commit()
             }
         }
 

@@ -26,8 +26,8 @@ class ScanVM(
     private val _scanResult = MutableLiveData<ScanData?>()
     val scanResult: LiveData<ScanData?> = _scanResult
 
-    private val loadingScan = MutableLiveData<Boolean>()
-    private val errorKah = MutableLiveData<Boolean>()
+    val loadingScan = MutableLiveData<Boolean>()
+    val errorKah = MutableLiveData<Boolean>()
 
     private fun getUserId(): String? {
         return repository.getUser()?.uid
