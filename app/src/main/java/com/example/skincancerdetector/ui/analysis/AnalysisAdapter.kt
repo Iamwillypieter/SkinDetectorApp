@@ -46,8 +46,7 @@ class AnalysisAdapter(
             if (index == position) {
                 // set the data for this item in the ViewHolder
                 holder.binding.tvRowTitle.text = getName(key)
-                holder.binding.tvRowPercent.text = "%.2f%%".format(value * 100)
-                holder.binding.tvRowDetail.text = getDesc(key)
+                holder.binding.donutProgress.setProgress((value*100).toDouble(), 100.0)
                 holder.binding.root.setOnClickListener {
                     onItemClickCallback.onItemClicked(key)
                 }

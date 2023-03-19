@@ -9,11 +9,9 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.skincancerdetector.R
 import com.example.skincancerdetector.databinding.FragmentLoginBinding
 import com.example.skincancerdetector.model.AuthVM
-
 
 class LoginFragment : Fragment() {
     private lateinit var binding : FragmentLoginBinding
@@ -32,10 +30,10 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnLogin.setOnClickListener {
-            val email = binding.editTextEmail.text.toString()
-            val password = binding.editTextPassword.text.toString()
+            val email = binding.editTextEmail.editText!!.text.toString()
+            val password = binding.editTextPassword.editText!!.text.toString()
             if (email.isEmpty() || password.isEmpty()) {
-                // Buat Toast kalo Email atau Password kosong
+                Toast.makeText(requireActivity(),"Please Input Password and Email",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             authViewModel.login(email, password)

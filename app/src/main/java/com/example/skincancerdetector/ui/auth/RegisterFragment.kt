@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.skincancerdetector.R
 import com.example.skincancerdetector.databinding.FragmentLoginBinding
@@ -27,15 +28,15 @@ class RegisterFragment : Fragment() {
         }
 
         binding.buttonRegister.setOnClickListener {//Register Function
-            val email = binding.editTextEmail.text.toString()
-            val password = binding.editTextPassword.text.toString()
-            val confpass = binding.editTextConfirmPassword.text.toString()
+            val email = binding.editTextEmail.editText!!.text.toString()
+            val password = binding.editTextPassword.editText!!.text.toString()
+            val confpass = binding.editTextConfirmPassword.editText!!.text.toString()
             if (email.isEmpty() || password.isEmpty()) {
-                // Buat Toast kalo Email atau Password kosong
+                Toast.makeText(requireActivity(),"Please input Password and Email", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if(password!=confpass){
-                // Buat Toast kalo password beda
+                Toast.makeText(requireActivity(),"Password does not match",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             authViewModel.register(email, password)

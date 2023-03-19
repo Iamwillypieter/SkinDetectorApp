@@ -5,11 +5,8 @@ import android.graphics.BitmapFactory
 import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.data.ScanData
-import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,11 +27,9 @@ class ScanVM(
     val scanResult: LiveData<ScanData?> = _scanResult
 
     private val loadingScan = MutableLiveData<Boolean>()
-    private val fuckYou = MutableLiveData<Boolean>()
+    private val errorKah = MutableLiveData<Boolean>()
 
-    var path: String? = null
-
-    fun getUserId(): String? {
+    private fun getUserId(): String? {
         return repository.getUser()?.uid
     }
 
@@ -50,7 +45,7 @@ class ScanVM(
         _imageBitmap.value = compressedBitmap
     }
 
-    fun getCurrentDateAsString(format: String = "yyyy-MM-dd-mm-ss"): String {
+    private fun getCurrentDateAsString(format: String = "yyyy-MM-dd-mm-ss"): String {
         val dateFormat = SimpleDateFormat(format, Locale.getDefault())
         return dateFormat.format(Date())
     }
@@ -73,17 +68,17 @@ class ScanVM(
                 val downloadUrl = repository.uploadImage(bitmap, fileName, userId)
                 val result = fakeAnalyze()
                 _scanResult.value = repository.updateDocument(documentId, downloadUrl, result, date)
-                fuckYou.value = false
+                errorKah.value = false
             } catch (e: Exception) {
                 print("Nya???"+e)
-                fuckYou.value = true
+                errorKah.value = true
             } finally {
                 loadingScan.value = false
             }
         }
     }
 
-    fun getAllUserAnalysisData(){
+    private fun getAllUserAnalysisData(){
         viewModelScope.launch {
             _allScanData.value = repository.getAllUserScanData()
         }
