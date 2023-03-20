@@ -14,7 +14,7 @@ data class ScanData(//Reminder, no need to code for scanId because, because FIRE
     val gender: String = "",
     val result: Map<String, Float> = emptyMap(),
     val imageUrl : String = "",
-    val timeStamp : String = "",
+    val timestamp : String = "",
 ):Parcelable
 
 data class UserData(

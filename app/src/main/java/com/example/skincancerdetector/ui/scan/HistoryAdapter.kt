@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.skincancerdetector.data.ScanData
 import com.example.skincancerdetector.databinding.HistoryRowBinding
-import com.example.skincancerdetector.ui.analysis.AnalysisAdapter
 
 class HistoryAdapter(private val allScanData : List<ScanData>): RecyclerView.Adapter<ViewHolderAnalysis>() {
 
@@ -34,7 +33,7 @@ class HistoryAdapter(private val allScanData : List<ScanData>): RecyclerView.Ada
             with(allScanData[position]){
                 binding.tvRowHistTitle.text = patientName
                 binding.tvRowHistBody.text = bodyPart
-                binding.tvRowHistDate.text = timeStamp
+                binding.tvRowHistDate.text = timestamp
                 Glide.with(binding.ivRowHist)
                     .load(imageUrl)
                     .into(binding.ivRowHist)
