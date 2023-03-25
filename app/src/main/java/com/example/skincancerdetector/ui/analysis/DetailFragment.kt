@@ -55,13 +55,21 @@ class DetailFragment : Fragment() {
         val treatContainer = binding.containerTreatment
         val preventContainer = binding.containerPreventive
 
+        Glide.with(this).load(disease.images[2]).into(binding.imageDetail)
         binding.tvDetailName.text = disease.name
         binding.tvDetailDescription.text = disease.description
-        Log.d("FFFFUCK YOU!!!", disease.description)
 
         for (imageUrl in disease.images) {
+            val layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
             val imageView = ImageView(requireActivity())
-            imageView.layoutParams = ViewGroup.LayoutParams(400, 300)
+
+            layoutParams.marginStart = resources.getDimensionPixelSize(R.dimen.margin_start_image)
+            layoutParams.height = 150
+            layoutParams.width = 200
+            imageView.layoutParams = layoutParams
             Glide.with(this)
                 .load(imageUrl)
                 .into(imageView)
