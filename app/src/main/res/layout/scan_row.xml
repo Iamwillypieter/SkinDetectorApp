@@ -14,7 +14,7 @@
         android:padding="16dp">
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/imgScanRow"
             android:layout_width="100dp"
             android:layout_height="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -31,10 +31,10 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+            app:layout_constraintBottom_toBottomOf="@+id/imgScanRow"
             app:layout_constraintEnd_toStartOf="@+id/donut_progress"
-            app:layout_constraintStart_toEndOf="@+id/imageView3"
-            app:layout_constraintTop_toTopOf="@+id/imageView3"
+            app:layout_constraintStart_toEndOf="@+id/imgScanRow"
+            app:layout_constraintTop_toTopOf="@+id/imgScanRow"
             app:layout_constraintVertical_bias="0.0" />
 
         <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
