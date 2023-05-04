@@ -1,29 +1,27 @@
 package com.example.skincancerdetector.data
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
-import kotlinx.coroutines.tasks.await
 
+import android.R.attr.bitmap
+import android.graphics.Bitmap
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.ml.modeldownloader.CustomModel
+import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions
+import com.google.firebase.ml.modeldownloader.DownloadType
+import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.tasks.await
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.support.image.ImageProcessor
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.util.Date
+
 
 class Repository {
 
@@ -34,9 +32,14 @@ class Repository {
     private val disease = "diseases"
     private val auth = FirebaseAuth.getInstance()
     private val storageRef = storage.reference
+    private var interpreter : Interpreter? = null
 
     fun getUser():FirebaseUser?{
         return auth.currentUser
+    }
+
+    init{
+        downloadModel()
     }
 
     suspend fun login(email: String, password: String): FirebaseUser {
@@ -80,8 +83,8 @@ class Repository {
     suspend fun updateDocument(
         documentId: String,
         downloadUrl: String,
-        result: Map<String,Float>,
-        timestamp: String
+        result: Map<String, Float>,
+        timestamp: String,
     ): ScanData? {
         val documentRef = firestore.collection(scans).document(documentId)
         val updateData = mapOf(
@@ -98,6 +101,66 @@ class Repository {
         val documentRef = firestore.collection(scans).document(documentId)
         return documentRef.get().await().toObject()
     }
+
+    private fun downloadModel(){
+        val conditions = CustomModelDownloadConditions.Builder()
+            // Also possible: .requireCharging() and .requireDeviceIdle()
+            .build()
+        FirebaseModelDownloader.getInstance()
+            .getModel("Skin-Cancer-Detector", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND,
+                conditions)
+            .addOnSuccessListener { model: CustomModel? ->
+                // Download complete. Depending on your app, you could enable the ML
+                // feature, or switch from the local model to the remote model, etc.
+
+                // The CustomModel object contains the local path of the model file,
+                // which you can use to instantiate a TensorFlow Lite interpreter.
+                val modelFile = model?.file
+                if (modelFile != null) {
+                    interpreter = Interpreter(modelFile)
+                }
+            }
+    }
+
+    fun analyze(bitmap: Bitmap):FloatArray?{
+        val input= processor(bitmap)
+        Log.i("repo", "analyze")
+        if(interpreter!=null && input!=null){
+            return runInference(interpreter!!,input)
+        }
+        else return null
+
+    }
+    
+    fun processor(bitmap: Bitmap): TensorImage? {
+        Log.i("repo", "processor")
+        val imageProcessor = ImageProcessor.Builder()
+            .add(ResizeOp(180, 180, ResizeOp.ResizeMethod.BILINEAR))
+            .build()
+        var tensorImage = TensorImage(DataType.FLOAT32)
+        tensorImage.load(bitmap)
+        return imageProcessor.process(tensorImage)
+    }
+
+
+
+    fun runInference(interpreter: Interpreter, input: TensorImage): FloatArray {
+        Log.i("repo", "inference")
+        val outputShape = intArrayOf(1, 9)
+        val outputType = DataType.FLOAT32
+        val outputBuffer = TensorBuffer.createFixedSize(outputShape, outputType).buffer
+        outputBuffer.rewind()
+
+        interpreter.run(input.buffer, outputBuffer)
+
+        outputBuffer.rewind()
+
+        val outputArray = FloatArray(9)
+        outputBuffer.asFloatBuffer().get(outputArray)
+
+        return outputArray
+    }
+
 
     suspend fun getAllUserScanData():List<ScanData>?{
         val userId = getUser()?.uid

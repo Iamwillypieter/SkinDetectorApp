@@ -5,8 +5,9 @@ import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
+
 @Parcelize
-data class ScanData(//Reminder, no need to code for scanId because, because FIREBASE!!!
+data class ScanData(
     val userId: String = "",
     val patientName: String = "",
     val bodyPart: String = "",

@@ -2,6 +2,7 @@ package com.example.skincancerdetector.model
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.data.ScanData
@@ -66,7 +67,7 @@ class ScanVM(
                 val documentId = repository.createNewDocument(scanData)
                 val fileName = "${scanData.patientName}${date}"
                 val downloadUrl = repository.uploadImage(bitmap, fileName, userId)
-                val result = fakeAnalyze()
+                val result = actualAnalyze(bitmap)
                 _scanResult.value = repository.updateDocument(documentId, downloadUrl, result, date)
                 errorKah.value = false
             } catch (e: Exception) {
@@ -85,35 +86,18 @@ class ScanVM(
 
     }
 
-
-//    suspend fun createNewDocument(scanData: ScanData): String {
-//        return withContext(Dispatchers.IO) {
-//            repository.createNewDocument(scanData)
-//
-//        }
-//    }
-//
-//    suspend fun uploadImage(bitmap: Bitmap, fileName: String, userId: String): String {
-//        return withContext(Dispatchers.IO) {
-//            repository.uploadImage(bitmap, fileName, userId)
-//        }
-//    }
-//
-//    suspend fun updateDocument(
-//        documentId: String,
-//        downloadUrl: String,
-//        result: Map<String, Float>
-//    ) :ScanData?{
-//        return withContext(Dispatchers.IO) {
-//            repository.updateDocument(documentId, downloadUrl, result)
-//        }
-//    }
-
-
     private suspend fun fakeAnalyze(): Map<String, Float> {
-        val labels = listOf("ML", "AK", "UNK", "VASC", "BKL", "NV", "BCC", "DF", "SCC")
+        val labels = listOf("AK", "BCC", "DF", "MEL", "NV", "BKL", "SK", "SCC", "VASC")
         delay(10000)
         return labels.associateWith { Random.nextFloat() }
+    }
+
+    private suspend fun actualAnalyze(bitmap: Bitmap): Map<String, Float> {
+
+        val labels = listOf("AK", "BCC", "DF", "MEL", "NV", "BKL", "SK", "SCC", "VASC")
+        Log.i("this", "actualAnalyze")
+        val values = repository.analyze(bitmap)
+        return labels.zip(values!!.asIterable()).toMap()
     }
 }
 
