@@ -41,6 +41,11 @@ class HistoryFragment : Fragment() {
                             .putExtra(AnalysisActivity.SCAN_DATA, data)
                     )
                 }
+
+                override fun deleteItem(data: String) {
+                    scanViewModel.deleteScanData(data)
+                    scanViewModel.getAllUserAnalysisData()
+                }
             })
             binding.rvHistory.adapter = adapter
         }

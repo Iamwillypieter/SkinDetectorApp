@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.skincancerdetector.data.ScanData
 import com.example.skincancerdetector.databinding.HistoryRowBinding
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.toObject
 
-class HistoryAdapter(private val allScanData : List<ScanData>): RecyclerView.Adapter<ViewHolderAnalysis>() {
+class HistoryAdapter(private val allScanData : Map<String, ScanData>): RecyclerView.Adapter<ViewHolderAnalysis>() {
 
     private lateinit var onItemClickCallback: OnItemClickCallback
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
@@ -29,8 +31,9 @@ class HistoryAdapter(private val allScanData : List<ScanData>): RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: ViewHolderAnalysis, position: Int) {
-        with(holder){
-            with(allScanData[position]){
+        val (documentId, scanData) = allScanData.entries.toList()[position]
+        with(holder) {
+            with(scanData) {
                 binding.tvRowHistTitle.text = patientName
                 binding.tvRowHistBody.text = bodyPart
                 binding.tvRowHistDate.text = timestamp
@@ -38,15 +41,18 @@ class HistoryAdapter(private val allScanData : List<ScanData>): RecyclerView.Ada
                     .load(imageUrl)
                     .into(binding.ivRowHist)
                 binding.root.setOnClickListener {
-                    onItemClickCallback.onItemClicked(this)
+                    onItemClickCallback.onItemClicked(scanData)
+                }
+                binding.deleteButton.setOnClickListener {
+                    onItemClickCallback.deleteItem(documentId)
                 }
             }
-
         }
     }
 
     interface OnItemClickCallback{
         fun onItemClicked(data:ScanData)
+        fun deleteItem(data:String)
     }
 }
 

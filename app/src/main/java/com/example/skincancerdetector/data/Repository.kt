@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -36,10 +37,6 @@ class Repository {
 
     fun getUser():FirebaseUser?{
         return auth.currentUser
-    }
-
-    init{
-        downloadModel()
     }
 
     suspend fun login(email: String, password: String): FirebaseUser {
@@ -97,12 +94,19 @@ class Repository {
         return documentRef.get().await().toObject()
     }
 
+    suspend fun deleteDocument(documentId: String){
+        firestore.collection(scans).document(documentId).delete().await()
+    }
+
     suspend fun getSpecificScanData(documentId: String):ScanData?{
         val documentRef = firestore.collection(scans).document(documentId)
         return documentRef.get().await().toObject()
     }
 
-    private fun downloadModel(){
+    fun downloadModel(
+        onSuccess: (Interpreter?) -> Unit,
+        onFailure: (Exception) -> Unit,
+    ){
         val conditions = CustomModelDownloadConditions.Builder()
             // Also possible: .requireCharging() and .requireDeviceIdle()
             .build()
@@ -110,15 +114,13 @@ class Repository {
             .getModel("Skin-Cancer-Detector", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND,
                 conditions)
             .addOnSuccessListener { model: CustomModel? ->
-                // Download complete. Depending on your app, you could enable the ML
-                // feature, or switch from the local model to the remote model, etc.
-
-                // The CustomModel object contains the local path of the model file,
-                // which you can use to instantiate a TensorFlow Lite interpreter.
                 val modelFile = model?.file
                 if (modelFile != null) {
                     interpreter = Interpreter(modelFile)
+                    onSuccess(interpreter)
                 }
+                else
+                    onFailure(Exception("Oh Nyooo~"))
             }
     }
 
@@ -132,7 +134,7 @@ class Repository {
 
     }
     
-    fun processor(bitmap: Bitmap): TensorImage? {
+    private fun processor(bitmap: Bitmap): TensorImage? {
         Log.i("repo", "processor")
         val imageProcessor = ImageProcessor.Builder()
             .add(ResizeOp(180, 180, ResizeOp.ResizeMethod.BILINEAR))
@@ -144,7 +146,7 @@ class Repository {
 
 
 
-    fun runInference(interpreter: Interpreter, input: TensorImage): FloatArray {
+    private fun runInference(interpreter: Interpreter, input: TensorImage): FloatArray {
         Log.i("repo", "inference")
         val outputShape = intArrayOf(1, 9)
         val outputType = DataType.FLOAT32
@@ -162,11 +164,11 @@ class Repository {
     }
 
 
-    suspend fun getAllUserScanData():List<ScanData>?{
+    suspend fun getAllUserScanData(): QuerySnapshot? {
         val userId = getUser()?.uid
         return if(userId!=null){
             val documentRef = firestore.collection(scans).whereEqualTo("userId",userId)
-            documentRef.get().await().map{it.toObject()}
+            documentRef.get().await()
         } else null
     }
 

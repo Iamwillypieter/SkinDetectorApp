@@ -46,6 +46,11 @@ class AnalysisFragment : Fragment() {
     }
 
     private fun displayData(data:List<Disease>, scan: ScanData){
+
+        val mostLikely = findLargestKeyValuePair(scan.result)
+        binding.tvMostLikely.text = data.find { disease -> disease.id == mostLikely?.key }?.name
+        binding.progressBar2.progress = (mostLikely?.value?.times(100))?.toInt()?:0
+        binding.tvPercent.text = String.format("%.2f%%", mostLikely?.value?.times(100))
         Glide.with(this)
             .load(scan.imageUrl)
             .circleCrop()
@@ -61,5 +66,17 @@ class AnalysisFragment : Fragment() {
                 findNavController().navigate(R.id.detailFragment, bundle)
             }
         })
+    }
+
+    fun findLargestKeyValuePair(map: Map<String, Float>): Map.Entry<String, Float>? {
+        var maxEntry: Map.Entry<String, Float>? = null
+
+        for (entry in map.entries) {
+            if (maxEntry == null || entry.value > maxEntry.value) {
+                maxEntry = entry
+            }
+        }
+
+        return maxEntry
     }
 }

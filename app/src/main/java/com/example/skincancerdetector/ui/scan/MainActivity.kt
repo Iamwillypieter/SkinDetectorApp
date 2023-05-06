@@ -10,6 +10,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -23,6 +26,7 @@ import com.example.skincancerdetector.data.Repository
 import com.example.skincancerdetector.databinding.ActivityMainBinding
 import com.example.skincancerdetector.model.*
 import com.example.skincancerdetector.ui.analysis.AnalysisActivity
+import com.example.skincancerdetector.ui.auth.AuthActivity
 import com.example.skincancerdetector.ui.utility.LoadingFragment
 
 class MainActivity : AppCompatActivity() {
@@ -49,23 +53,18 @@ class MainActivity : AppCompatActivity() {
 
         scanViewModel.scanResult.observe(this){
             if(it!=null){
-                val fragmentManager = supportFragmentManager
-
-                // Add the HomeFragment to the backstack with a unique tag
-                fragmentManager.beginTransaction()
-                    .replace(R.id.fragContainMain, HomeFragment())
-                    .addToBackStack("HomeFragment")
-                    .commit()
-
-                // Remove all other fragments from the backstack
-                fragmentManager.popBackStack("HomeFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
-
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finishAffinity()
                 startActivity(
                     Intent(this, AnalysisActivity::class.java)
                         .putExtra(AnalysisActivity.SCAN_DATA, it)
                 )
             }
         }
+
+
 
         scanViewModel.loadingScan.observe(this){ isLoading ->
             if (isLoading){
@@ -91,41 +90,62 @@ class MainActivity : AppCompatActivity() {
             scanViewModel.storeImage(imageBitmap, 100)
         }
         fun dispatchTakePictureIntent() {
-            val cameraPermission = android.Manifest.permission.CAMERA
-            val storagePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
-            val pickImage = "Pick Image"
-            val takePhoto = "Take Photo"
+            if(scanViewModel.modelCondition.value == true) {
+                val cameraPermission = android.Manifest.permission.CAMERA
+                val storagePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+                val pickImage = "Pick Image"
+                val takePhoto = "Take Photo"
 
-            val options = arrayOf<CharSequence>(pickImage, takePhoto)
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Select Image Source")
-            builder.setItems(options) { dialog, item ->
-                when (options[item]) {
-                    pickImage -> {
-                        if (ContextCompat.checkSelfPermission(this, storagePermission) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(this, arrayOf(storagePermission), 4)
-                            print("Storage permission not granted")
-                        } else {
-                            // Permission granted, launch file picker intent
-                            val intent = Intent(Intent.ACTION_GET_CONTENT)
-                            intent.type = "image/*" // only allow image file types
-                            documentLauncher.launch(intent.type)
+                val options = arrayOf<CharSequence>(pickImage, takePhoto)
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Select Image Source")
+                builder.setItems(options) { dialog, item ->
+                    when (options[item]) {
+                        pickImage -> {
+                            if (ContextCompat.checkSelfPermission(
+                                    this,
+                                    storagePermission
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
+                                ActivityCompat.requestPermissions(
+                                    this,
+                                    arrayOf(storagePermission),
+                                    4
+                                )
+                                print("Storage permission not granted")
+                            } else {
+                                // Permission granted, launch file picker intent
+                                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                                intent.type = "image/*" // only allow image file types
+                                documentLauncher.launch(intent.type)
+                            }
                         }
-                    }
-                    takePhoto -> {
-                        if (ContextCompat.checkSelfPermission(this, cameraPermission) != PackageManager.PERMISSION_GRANTED) {
-                            // Permission not granted, request it
-                            ActivityCompat.requestPermissions(this, arrayOf(cameraPermission), 6)
-                            print("Camera permission not granted")
-                        } else {
-                            // Permission granted, launch camera intent
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            resultLauncher.launch(intent)
+                        takePhoto -> {
+                            if (ContextCompat.checkSelfPermission(
+                                    this,
+                                    cameraPermission
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
+                                // Permission not granted, request it
+                                ActivityCompat.requestPermissions(
+                                    this,
+                                    arrayOf(cameraPermission),
+                                    6
+                                )
+                                print("Camera permission not granted")
+                            } else {
+                                // Permission granted, launch camera intent
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                                resultLauncher.launch(intent)
+                            }
                         }
                     }
                 }
+                builder.show()
             }
-            builder.show()
+            else {
+                Toast.makeText(this,"Model Not Downloaded, Please Wait", Toast.LENGTH_SHORT).show()
+            }
         }
 
 
@@ -133,6 +153,9 @@ class MainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.navigation_home -> {
                     // Kalo klik home (masih gatau mau naro apa di halaman home)
+                    Navigation.findNavController(
+                        this, binding.fragContainMain.id
+                    ).navigate(R.id.homeFragment)
                     true
                 }
                 R.id.navigation_scan -> {
@@ -153,6 +176,31 @@ class MainActivity : AppCompatActivity() {
 
 
         setContentView(binding.root)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.logout -> {
+                scanViewModel.logout()
+                startActivity(
+                    Intent(this,AuthActivity::class.java).apply {
+                        addFlags(
+                            Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        )
+                    }
+                )
+            }
+
+        }
+        return true
     }
 
 }

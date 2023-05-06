@@ -41,8 +41,9 @@ class AnalysisAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolderScans, position: Int) {
-        val scanResultEntries = scanData.result.entries.toList() // get a list of key-value pairs
-        scanResultEntries.forEachIndexed { index, (key, value) ->
+        val sortedItems = scanData.result.entries.sortedByDescending { it.value }
+        //val scanResultEntries = sortedItems.result.entries.toList() // get a list of key-value pairs
+        sortedItems.forEachIndexed { index, (key, value) ->
             if (index == position) {
                 holder.binding.tvRowTitle.text = getName(key)
                 holder.binding.donutProgress.setProgress((value*100).toDouble(), 100.0)
