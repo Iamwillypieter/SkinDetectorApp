@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.skincancerdetector.R
 import com.example.skincancerdetector.databinding.FragmentHistoryBinding
@@ -16,6 +17,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding : FragmentHomeBinding
     private lateinit var scanViewModel: ScanVM
+    val cameraPermission = android.Manifest.permission.CAMERA
+    val mediaPermission = android.Manifest.permission.ACCESS_MEDIA_LOCATION
+    val storagePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +30,7 @@ class HomeFragment : Fragment() {
         scanViewModel.modelCondition.observe(requireActivity()){
             if(it){
                 binding.tvHome.text = "Model Ready To Use"
+
             }
             else{
                 binding.tvHome.text = "Model Failed To Download, Check Your Internet Connection"

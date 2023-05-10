@@ -63,14 +63,6 @@
             app:layout_constraintStart_toStartOf="@+id/tvRowHistBody"
             app:layout_constraintTop_toBottomOf="@+id/tvRowHistBody" />
 
-        <TextView
-            android:id="@+id/tvRowHistDesc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintEnd_toEndOf="@+id/tvRowHistDate"
-            app:layout_constraintStart_toStartOf="@+id/tvRowHistDate"
-            app:layout_constraintTop_toBottomOf="@+id/tvRowHistDate" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

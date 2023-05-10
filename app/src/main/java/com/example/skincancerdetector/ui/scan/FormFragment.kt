@@ -33,7 +33,7 @@ class FormFragment : Fragment() {
             val name = binding.edName.text.toString()
             val bodyPart = binding.edBody.text.toString()
             val age = binding.edAge.text.toString().toIntOrNull()
-            val gender = binding.edGender.text.toString()
+            val gender = binding.edGender.selectedItem.toString()
             if (name.isEmpty() || bodyPart.isEmpty() || (age == null) || gender.isEmpty()) {
                 // Make a toast that some of the form are empty
                 return@setOnClickListener
@@ -46,7 +46,7 @@ class FormFragment : Fragment() {
                     age,
                     gender,
                     mapOf(
-                        "FUCK" to 1.99f),
+                        "Scan" to 1.99f),
                     ""
                 )
             )

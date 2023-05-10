@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,6 +35,9 @@ class MainActivity : AppCompatActivity() {
     private val repository = Repository()
     //private val classifier = ImageClassifier(this)
     private lateinit var scanViewModel: ScanVM
+    val cameraPermission = android.Manifest.permission.CAMERA
+    val storagePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+    val mediaPermission = android.Manifest.permission.ACCESS_MEDIA_LOCATION
 
     private lateinit var binding : ActivityMainBinding
 
@@ -50,6 +54,9 @@ class MainActivity : AppCompatActivity() {
                 ).navigate(R.id.formFragment)
             }
         }
+
+
+
 
         scanViewModel.scanResult.observe(this){
             if(it!=null){
@@ -71,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                     .replace(binding.fragContainMain.id, LoadingFragment())
                     .commit()
+                binding.navView.visibility = View.GONE
             }
         }
 
@@ -91,8 +99,8 @@ class MainActivity : AppCompatActivity() {
         }
         fun dispatchTakePictureIntent() {
             if(scanViewModel.modelCondition.value == true) {
-                val cameraPermission = android.Manifest.permission.CAMERA
-                val storagePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+
+
                 val pickImage = "Pick Image"
                 val takePhoto = "Take Photo"
 
@@ -102,17 +110,13 @@ class MainActivity : AppCompatActivity() {
                 builder.setItems(options) { dialog, item ->
                     when (options[item]) {
                         pickImage -> {
-                            if (ContextCompat.checkSelfPermission(
-                                    this,
-                                    storagePermission
-                                ) != PackageManager.PERMISSION_GRANTED
+                            if (ContextCompat.checkSelfPermission(this, storagePermission) != PackageManager.PERMISSION_GRANTED && (ContextCompat.checkSelfPermission(this,mediaPermission)) != PackageManager.PERMISSION_GRANTED
                             ) {
                                 ActivityCompat.requestPermissions(
                                     this,
-                                    arrayOf(storagePermission),
+                                    arrayOf(storagePermission,mediaPermission),
                                     4
                                 )
-                                print("Storage permission not granted")
                             } else {
                                 // Permission granted, launch file picker intent
                                 val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -132,7 +136,6 @@ class MainActivity : AppCompatActivity() {
                                     arrayOf(cameraPermission),
                                     6
                                 )
-                                print("Camera permission not granted")
                             } else {
                                 // Permission granted, launch camera intent
                                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)

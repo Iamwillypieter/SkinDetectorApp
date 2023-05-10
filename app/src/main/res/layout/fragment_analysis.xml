@@ -49,34 +49,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@tools:sample/avatars" />
 
-                <ImageView
-                    android:id="@+id/btnSave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/baseline_save_24"
-                    app:layout_constraintEnd_toStartOf="@+id/btnDown"
-                    app:layout_constraintTop_toTopOf="@+id/btnDown" />
-
-                <ImageView
-                    android:id="@+id/btnDown"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/baseline_arrow_downward_24"
-                    app:layout_constraintEnd_toStartOf="@+id/btnShare"
-                    app:layout_constraintTop_toTopOf="@+id/btnShare" />
-
-                <ImageView
-                    android:id="@+id/btnShare"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/baseline_share_24"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvMostLikely" />
-
                 <TextView
                     android:id="@+id/tvMostLikely"
                     style="@style/Widget.MaterialComponents.TextView"

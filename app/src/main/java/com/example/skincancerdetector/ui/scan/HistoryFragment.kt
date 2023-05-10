@@ -1,5 +1,7 @@
 package com.example.skincancerdetector.ui.scan
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -43,13 +45,31 @@ class HistoryFragment : Fragment() {
                 }
 
                 override fun deleteItem(data: String) {
-                    scanViewModel.deleteScanData(data)
-                    scanViewModel.getAllUserAnalysisData()
+                    showDeleteConfirmationDialog(requireActivity(),
+                    onConfirmDelete = {
+                        scanViewModel.deleteScanData(data)
+                        scanViewModel.getAllUserAnalysisData()
+                    })
+
                 }
             })
             binding.rvHistory.adapter = adapter
         }
         return binding.root
+    }
+
+    fun showDeleteConfirmationDialog(context: Context, onConfirmDelete: () -> Unit) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Delete Confirmation")
+        builder.setMessage("Are you sure you want to delete?")
+        builder.setPositiveButton("Delete") { dialog, _ ->
+            onConfirmDelete.invoke()
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 
 }
