@@ -13,7 +13,6 @@ import com.google.firebase.ml.modeldownloader.CustomModel
 import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions
 import com.google.firebase.ml.modeldownloader.DownloadType
 import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
@@ -22,17 +21,17 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 
-class Repository {
+class Repository() {
 
     private val firestore = Firebase.firestore
-    private val storage = Firebase.storage
+
     private val scans = "scans"
     private val users = "user_data"
     private val disease = "diseases"
     private val auth = FirebaseAuth.getInstance()
-    private val storageRef = storage.reference
     private var interpreter : Interpreter? = null
 
     fun getUser():FirebaseUser?{
@@ -55,15 +54,8 @@ class Repository {
 
     //Upload Image
     suspend fun uploadImage(image: Bitmap, fileName: String, userId: String): String {
-        val baos = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
-        val path = "UserData/$userId/Scans/$fileName.jpg"
-        val imageRef = storageRef.child(path)
         return try {
-            imageRef.putBytes(data).await()
-            val downloadUrl = imageRef.downloadUrl.await()
-            downloadUrl.toString()
+            LocalStorageHelper.saveImage(image, fileName, userId)
         } catch (e: Exception) {
             throw e
         }
@@ -111,7 +103,7 @@ class Repository {
             // Also possible: .requireCharging() and .requireDeviceIdle()
             .build()
         FirebaseModelDownloader.getInstance()
-            .getModel("Skin-Cancer-Detector", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND,
+            .getModel("Skin-Disease-Detector", DownloadType.LOCAL_MODEL_UPDATE_IN_BACKGROUND,
                 conditions)
             .addOnSuccessListener { model: CustomModel? ->
                 val modelFile = model?.file
@@ -176,6 +168,5 @@ class Repository {
         val collectionRef = firestore.collection(disease)
         return collectionRef.get().await().map{it.toObject()}
     }
-
     //TODO: Buat fungsi buat auto login pake Google... (agak susah, emang, iya...)
 }

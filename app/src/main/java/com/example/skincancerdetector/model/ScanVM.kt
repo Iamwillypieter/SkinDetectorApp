@@ -125,6 +125,7 @@ class ScanVM(
         val labels = listOf("AK", "BCC", "DF", "MEL", "NV", "BKL", "SK", "SCC", "VASC")
         Log.i("this", "actualAnalyze")
         val values = repository.analyze(bitmap)
+        Log.i("analyzed_values", values.toString())
         return labels.zip(values!!.asIterable()).toMap()
     }
 }

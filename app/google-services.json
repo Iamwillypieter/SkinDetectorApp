@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "249066939405",
-    "project_id": "skin-cancer-detector-420b6",
-    "storage_bucket": "skin-cancer-detector-420b6.appspot.com"
+    "project_number": "787031865116",
+    "project_id": "skindetectionapp-cb3d2",
+    "storage_bucket": "skindetectionapp-cb3d2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:249066939405:android:0b13e4e0f4cdba2054e144",
+        "mobilesdk_app_id": "1:787031865116:android:8483c1b39929210a876cd9",
         "android_client_info": {
-          "package_name": "com.example.skincancerdetector"
+          "package_name": "com.example.skindetectionapp"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "249066939405-luitoibmsslkgirp71mp7spe39k2psg1.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAEBev-Sw-2qjLsfV68nxLQaL9n3snYODo"
+          "current_key": "AIzaSyCZpaApQJVSKlG6hQO9ehDffYE_tu1RPuU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "249066939405-luitoibmsslkgirp71mp7spe39k2psg1.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

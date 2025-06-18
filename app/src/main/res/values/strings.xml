@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Skin Cancer Detector</string>
+    <string name="app_name">Skin Detect</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Initializing Model, Please Wait…</string>
     <string name="title_activity_bottom_nav">BottomNavActivity</string>
